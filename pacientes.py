@@ -18,12 +18,17 @@ def carregar_pacientes():
 
 def listar_todos_pacientes():
     pacientes = carregar_pacientes()
+    # Ordena pela chave nome dentro do dicionário
+    pacientes_ordenados = dict(sorted(pacientes.items(), key=lambda item: item[1]["nome"].lower()))
+
     clear_screen()
     print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
-    print("=========== Listagem de pacientes= ===========\n")
+    print("== Listagem de pacientes - Ordem Alfabética ==\n")
     print("(Paciente------------------------------) - (CPF---------) - (telefone-----)")
-    for k, v in pacientes.items():
-        print(f"{(v['nome']+'                                              ')[0:40]} - {formatar_cpf(v['cpf'])} - {v['telefone']}")
+
+    for cpf, dados in pacientes_ordenados.items():
+        print(f"{(dados['nome']+'                                              ')[0:40]} - {formatar_cpf(cpf)} - {dados['telefone']}")
+        print('- ' * 38)
 
     input("Pressione ENTER para continuar...")
 
@@ -36,15 +41,17 @@ def listar_paciente_por_cpf(cpf: str):
     for k, v in pacientes.items():
         if k == cpf:
             print(f"CPF: {v['cpf']} - RG: {v['rg']}")
+
             if v['idade'] == None:
                 print(f"Paciente: {v['nome']} - Idade: --")
             else:
                 print(f"Paciente: {v['nome']} - Idade: {v['idade']}")
+
             print(f"Telefone: {v['telefone']} - Status documentação: {v['documentos_ok']}")
             input("Pressione ENTER para continuar...")
 
 
-def cadastrar_paciente(nome, idade, telefone, rg, cpf):
+def salvar_paciente(nome, idade, telefone, rg, cpf, acao):
     pacientes[cpf] = {
         "nome": nome,
         "idade": idade,
@@ -54,7 +61,7 @@ def cadastrar_paciente(nome, idade, telefone, rg, cpf):
         "documentos_ok": bool(rg and cpf)
     }
     salvar_dados(ARQUIVO, pacientes)
-    print(f"✅ Paciente {nome} cadastrado!")
+    print(f"✅ Paciente: {nome} ==> {acao} realizada(o) com sucesso!✅")
     time.sleep(3)
 
 def ins_dados_paciente(cpf):
@@ -65,7 +72,7 @@ def ins_dados_paciente(cpf):
         rg_paciente = input("Digite o RG: ")
         resposta = input_sn("Deseja concluir o cadastro do paciente? (S/N): ")
         if resposta == "S":
-            cadastrar_paciente(paciente, idade, tel_paciente, rg_paciente, cpf)
+            salvar_paciente(paciente, idade, tel_paciente, rg_paciente, cpf, 'Cadastramento:')
             return
             
         else:
@@ -75,6 +82,28 @@ def ins_dados_paciente(cpf):
             
     paciente = listar_paciente_por_cpf(cpf)
     return
+
+
+def altera_dados_paciente(cpf):
+    print(f"Nome: {pacientes[cpf]['nome']}")
+    paciente = tratar_nome(input("Digite o nome do paciente: "))
+    print(f"Idade: {pacientes[cpf]['idade']}")
+    idade = tratar_idade(input("Digite a idade: "))
+    print(f"Telefone: {pacientes[cpf]['telefone']}")
+    tel_paciente = tratar_telefone(input("Digite o telefone: "))
+    print(f"RG: {pacientes[cpf]['rg']}")
+    rg_paciente = input("Digite o RG: ")
+    resposta = input_sn("Deseja concluir a alteração do paciente? (S/N): ")
+    if resposta == "S":
+        salvar_paciente(paciente, idade, tel_paciente, rg_paciente, cpf, 'Alteração de cadastro:')
+            
+    else:
+        print("Cancelando alteração de cadastro de paciente.")
+        time.sleep(2)
+        
+    paciente = listar_paciente_por_cpf(cpf)
+    return
+
 
 def cadastrar_pacientes():
     while True:
@@ -92,5 +121,23 @@ def cadastrar_pacientes():
             return
 
         ins_dados_paciente(cpf_paciente)
+        break                
+
+def alterar_pacientes():
+    while True:
+        clear_screen()
+        print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+        print("=============== Alterar paciente ===============\n")
+        cpf_paciente = input("Entre com o CPF do paciente ou (0) para retornar ao menu: ")
+        
+        if cpf_paciente == "0":
+            break
+
+        if not validar_cpf(cpf_paciente):
+            print("❌ CPF inválido. Tente novamente!")
+            time.sleep(2)
+            return
+
+        altera_dados_paciente(cpf_paciente)
         break                
 
