@@ -128,16 +128,24 @@ def tratar_telefone(telefone: str) -> str | None:
 # -------------------------------
 # Tratamento de idade
 # -------------------------------
-def tratar_idade(idade: str) -> str | None:
+def tratar_idade(valor: str) -> int:
     """
-    Remove caracteres não numéricos e valida tamanho (7 a 10 dígitos).
-    Retorna RG formatado ou None se inválido.
+    Trata a entrada da idade do paciente.
+    - Converte para inteiro
+    - Garante que está em um intervalo válido (0 a 120)
     """
-    numeros = re.sub(r"\D", "", idade)
-    if 7 <= len(numeros) <= 3:
-        return numeros
-    return None
-
+    while True:
+        if not valor.isdigit():
+            valor = input("❌ Idade inválida. Digite apenas números: ")
+            continue
+        
+        idade = int(valor)
+        
+        if idade < 0 or idade > 120:
+            valor = input("❌ Idade fora do intervalo válido (0-120). Digite novamente: ")
+            continue
+        
+        return idade
 
 def input_sn(msg: str = "Digite S para sim ou N para não: ") -> str:
     while True:
