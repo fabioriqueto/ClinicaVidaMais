@@ -126,7 +126,7 @@ def tratar_telefone(telefone: str) -> str | None:
         return None
 
 # -------------------------------
-# Tratamento de RG
+# Tratamento de idade
 # -------------------------------
 def tratar_idade(idade: str) -> str | None:
     """
@@ -138,3 +138,10 @@ def tratar_idade(idade: str) -> str | None:
         return numeros
     return None
 
+
+def input_sn(msg: str = "Digite S para sim ou N para não: ") -> str:
+    while True:
+        entrada = input(msg).strip().upper()
+        if entrada in ["S", "N"]:
+            return entrada
+        print("Entrada inválida! Digite apenas S ou N.")

@@ -1,4 +1,4 @@
-from pacientes import cadastrar_pacientes
+from pacientes import cadastrar_pacientes, listar_todos_pacientes
 import os, time
 from utils  import clear_screen
 
@@ -19,8 +19,8 @@ def menu_pacientes():
         if opcao_menu_pacientes == "1":
             cadastrar_pacientes()
 
-#        elif opcao_menu_pacientes == "2":
-#            listar_pacientes()
+        elif opcao_menu_pacientes == "2":
+            listar_todos_pacientes()
 #        elif opcao_menu_pacientes == "3":
 #            alterar_paciente(input("CPF: "), input("Novo Nome: ") or None, input("Nova Idade: ") or None, input("Novo Tel: ") or None, input("Novo RG: ") or None)
 #        elif opcao_menu_pacientes == "4":
