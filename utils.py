@@ -153,3 +153,7 @@ def input_sn(msg: str = "Digite S para sim ou N para não: ") -> str:
         if entrada in ["S", "N"]:
             return entrada
         print("Entrada inválida! Digite apenas S ou N.")
+        
+def input_default(msg, default=""):
+    entrada = input(f"{msg} [{default}]: ").strip()
+    return entrada if entrada else default

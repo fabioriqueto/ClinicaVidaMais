@@ -1,5 +1,6 @@
-from utils import carregar_dados, salvar_dados, validar_cpf,validar_data_nascimento, calcular_idade, tratar_nome, tratar_telefone, tratar_idade, input_sn, formatar_cpf, clear_screen
+from utils import carregar_dados, salvar_dados, validar_cpf,validar_data_nascimento, calcular_idade, tratar_nome, tratar_telefone, tratar_idade, input_sn, formatar_cpf, limpar_cpf, input_default, clear_screen
 import os, time
+
 
 ARQUIVO = "pacientes.json"
 pacientes = carregar_dados(ARQUIVO, {})
@@ -48,7 +49,6 @@ def listar_paciente_por_cpf(cpf: str):
                 print(f"Paciente: {v['nome']} - Idade: {v['idade']}")
 
             print(f"Telefone: {v['telefone']} - Status documentação: {v['documentos_ok']}")
-            input("Pressione ENTER para continuar...")
 
 
 def salvar_paciente(nome, idade, telefone, rg, cpf, acao):
@@ -81,18 +81,16 @@ def ins_dados_paciente(cpf):
             return
             
     paciente = listar_paciente_por_cpf(cpf)
+    input("Pressione ENTER para continuar...")
+
     return
 
 
 def altera_dados_paciente(cpf):
-    print(f"Nome: {pacientes[cpf]['nome']}")
-    paciente = tratar_nome(input("Digite o nome do paciente: "))
-    print(f"Idade: {pacientes[cpf]['idade']}")
-    idade = tratar_idade(input("Digite a idade: "))
-    print(f"Telefone: {pacientes[cpf]['telefone']}")
-    tel_paciente = tratar_telefone(input("Digite o telefone: "))
-    print(f"RG: {pacientes[cpf]['rg']}")
-    rg_paciente = input("Digite o RG: ")
+    paciente = tratar_nome(input_default("Digite o nome do paciente: ",pacientes[cpf]['nome']))
+    idade = tratar_idade(input(f"Digite a idade [{pacientes[cpf]['idade']}]: "))
+    tel_paciente = tratar_telefone(input_default("Digite o telefone: ",pacientes[cpf]['telefone']))
+    rg_paciente = input_default("Digite o RG: ",pacientes[cpf]['rg'])
     resposta = input_sn("Deseja concluir a alteração do paciente? (S/N): ")
     if resposta == "S":
         salvar_paciente(paciente, idade, tel_paciente, rg_paciente, cpf, 'Alteração de cadastro:')
@@ -102,6 +100,7 @@ def altera_dados_paciente(cpf):
         time.sleep(2)
         
     paciente = listar_paciente_por_cpf(cpf)
+    input("Pressione ENTER para continuar...")
     return
 
 
@@ -110,8 +109,8 @@ def cadastrar_pacientes():
         clear_screen()
         print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
         print("============= Cadastrar paciente =============\n")
-        cpf_paciente = input("Entre com o CPF do paciente ou (0) para retornar ao menu: ")
-        
+        cpf_paciente = limpar_cpf(input("Entre com o CPF do paciente ou (0) para retornar ao menu: "))
+                
         if cpf_paciente == "0":
             break
 
@@ -128,7 +127,7 @@ def alterar_pacientes():
         clear_screen()
         print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
         print("=============== Alterar paciente ===============\n")
-        cpf_paciente = input("Entre com o CPF do paciente ou (0) para retornar ao menu: ")
+        cpf_paciente = limpar_cpf(input("Entre com o CPF do paciente ou (0) para retornar ao menu: "))
         
         if cpf_paciente == "0":
             break
@@ -141,3 +140,66 @@ def alterar_pacientes():
         altera_dados_paciente(cpf_paciente)
         break                
 
+def excluir_paciente(cpf):
+    nome = pacientes[cpf]["nome"]
+    del pacientes[cpf]
+    salvar_dados(ARQUIVO, pacientes)
+    print(f"🗑️ Paciente {nome} (CPF: {cpf}) excluído!")
+
+def cadastrar_pacientes():
+    while True:
+        clear_screen()
+        print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+        print("============= Cadastrar paciente =============\n")
+        cpf_paciente = limpar_cpf(input("Entre com o CPF do paciente ou (0) para retornar ao menu: "))
+        
+        if cpf_paciente == "0":
+            break
+
+        if not validar_cpf(cpf_paciente):
+            print("❌ CPF inválido. Tente novamente!")
+            time.sleep(2)
+            return
+
+        ins_dados_paciente(cpf_paciente)
+        break                
+
+def localizar_excluir_pacientes():
+    while True:
+        clear_screen()
+        print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+        print("============== Excluir paciente ==============\n")
+        cpf_paciente = limpar_cpf(input("Entre com o CPF do paciente ou (0) para retornar ao menu: "))
+        
+        if cpf_paciente == "0":
+            break
+
+        if not validar_cpf(cpf_paciente):
+            print("❌ CPF inválido. Tente novamente!")
+            time.sleep(2)
+            return
+        
+        pacientes = carregar_pacientes()
+        if cpf_paciente not in pacientes:
+            print("❌ CPF paciente não localizado. Tente novamente!")
+            time.sleep(2)
+            return
+
+        for k, v in pacientes.items():
+            if k == cpf_paciente:
+                print(f"CPF: {v['cpf']} - RG: {v['rg']}")
+
+                if v['idade'] == None:
+                    print(f"Paciente: {v['nome']} - Idade: --")
+                else:
+                    print(f"Paciente: {v['nome']} - Idade: {v['idade']}")
+
+                print(f"Telefone: {v['telefone']} - Status documentação: {v['documentos_ok']}")
+
+        resposta = input_sn("Deseja excluir este paciente? (S/N): ")
+        if resposta == "S":
+            excluir_paciente(cpf_paciente)
+        else:
+            print("Cancelando da ação de exclusão do paciente.")
+            time.sleep(2)
+            break                

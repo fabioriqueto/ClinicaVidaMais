@@ -1,4 +1,4 @@
-from pacientes import cadastrar_pacientes, listar_todos_pacientes, alterar_pacientes
+from pacientes import cadastrar_pacientes, listar_todos_pacientes, alterar_pacientes, localizar_excluir_pacientes
 import os, time
 from utils  import clear_screen
 
@@ -23,8 +23,8 @@ def menu_pacientes():
             listar_todos_pacientes()
         elif opcao_menu_pacientes == "3":
             alterar_pacientes()
-#        elif opcao_menu_pacientes == "4":
-#            excluir_paciente(input("CPF: "))
+        elif opcao_menu_pacientes == "4":
+            localizar_excluir_pacientes()
         elif opcao_menu_pacientes == "0":
             break
         else:
