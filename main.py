@@ -1,15 +1,46 @@
-from pacientes import cadastrar_pacientes, listar_todos_pacientes, alterar_pacientes, localizar_excluir_pacientes
+from pacientes import localizar_paciente_por_cpf_chamada, cadastrar_pacientes, listar_todos_pacientes, alterar_pacientes, localizar_excluir_pacientes, listar_paciente_por_nome_parcial, procurar_paciente_por_nome_exato
 import os, time
 from utils  import clear_screen
+
+def submenu_relatorio_pacientes():
+    while True:
+        clear_screen()
+        print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+        print("=== SUBMENU === RELATÓRIOS DE PACIENTES ======\n")
+        print("1 - Listar pacientes por parte do nome")
+        print("2 - Listar todos os pacientes")
+        print("3 - Localizar pacientes pelo nome exato")
+        print("4 - Localizar pacientes pelo cpf")
+        print("0 - Retornar ao MENU anterior")
+
+        opcao_menu_pacientes = input("Escolha o número que corresponde ao MENU: ")
+
+        if opcao_menu_pacientes == "1":
+            listar_paciente_por_nome_parcial()
+
+        elif opcao_menu_pacientes == "2":
+            listar_todos_pacientes()
+
+        elif opcao_menu_pacientes == "3":
+            procurar_paciente_por_nome_exato()
+
+        elif opcao_menu_pacientes == "4":
+            localizar_paciente_por_cpf_chamada()
+
+        elif opcao_menu_pacientes == "0":
+            break
+        else:
+            print("❌ Opção inválida!")
+            time.sleep(2)
 
 
 def menu_pacientes():
     while True:
         clear_screen()
         print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
-        print("=========== CADASTRO DE PACIENTES ============\n")
+        print("=== MENU === CADASTRO DE PACIENTES ===========\n")
         print("1 - Cadastrar Pacientes")
-        print("2 - Listar Pacientes")
+        print("2 - Listar/Localizar Pacientes")
         print("3 - Alterar Paciente")
         print("4 - Excluir Paciente")
         print("0 - Retornar ao MENU PRINCIPAL")
@@ -20,7 +51,7 @@ def menu_pacientes():
             cadastrar_pacientes()
 
         elif opcao_menu_pacientes == "2":
-            listar_todos_pacientes()
+            submenu_relatorio_pacientes()
         elif opcao_menu_pacientes == "3":
             alterar_pacientes()
         elif opcao_menu_pacientes == "4":
@@ -40,11 +71,10 @@ def menu():
         print("1 - Cadastro de pacientes")
         print("2 - Cadastro de médicos")
         print("3 - Cadastro de exames")
-        print("4 - Estatísticas")
-        print("5 - Relatórios")
-        print("6 - Área Médica")
-        print("7 - Agendamento de consultas")
-        print("8 - Agendamento de exames")
+        print("4 - Consultas / Relatórios / Estatísticas")
+        print("5 - Área Médica")
+        print("6 - Agendamento de consultas")
+        print("7 - Agendamento de exames")
         print("0 - Sair")
 
         opcao = input("Escolha o número que corresponde ao MENU: ")

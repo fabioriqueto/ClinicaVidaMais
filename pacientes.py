@@ -1,12 +1,23 @@
-from utils import carregar_dados, salvar_dados, validar_cpf,validar_data_nascimento, calcular_idade, tratar_nome, tratar_telefone, tratar_idade, input_sn, formatar_cpf, limpar_cpf, input_default, clear_screen
-import os, time
+import os
+import time
+import json
 
+from utils import (
+    carregar_dados,
+    salvar_dados,
+    validar_cpf,
+    tratar_nome,
+    tratar_telefone,
+    tratar_idade,
+    input_sn,
+    formatar_cpf,
+    limpar_cpf,
+    input_default,
+    clear_screen,
+)
 
 ARQUIVO = "pacientes.json"
 pacientes = carregar_dados(ARQUIVO, {})
-
-import json
-import os
 
 ARQUIVO_PACIENTES = "pacientes.json"
 
@@ -16,6 +27,7 @@ def carregar_pacientes():
         return []
     with open(ARQUIVO_PACIENTES, "r", encoding="utf-8") as f:
         return json.load(f)
+
 
 def listar_todos_pacientes():
     pacientes = carregar_pacientes()
@@ -34,7 +46,8 @@ def listar_todos_pacientes():
     input("Pressione ENTER para continuar...")
 
 
-def listar_paciente_por_cpf(cpf: str):
+def localizar_paciente_por_cpf(cpf: str):
+
     pacientes = carregar_pacientes()
     clear_screen()
     print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
@@ -80,7 +93,7 @@ def ins_dados_paciente(cpf):
             time.sleep(2)
             return
             
-    paciente = listar_paciente_por_cpf(cpf)
+    paciente = localizar_paciente_por_cpf(cpf)
     input("Pressione ENTER para continuar...")
 
     return
@@ -99,7 +112,7 @@ def altera_dados_paciente(cpf):
         print("Cancelando alteração de cadastro de paciente.")
         time.sleep(2)
         
-    paciente = listar_paciente_por_cpf(cpf)
+    paciente = localizar_paciente_por_cpf(cpf)
     input("Pressione ENTER para continuar...")
     return
 
@@ -187,13 +200,14 @@ def localizar_excluir_pacientes():
 
         for k, v in pacientes.items():
             if k == cpf_paciente:
-                print(f"CPF: {v['cpf']} - RG: {v['rg']}")
 
+                print(f"Paciente: {v['nome']}")
                 if v['idade'] == None:
-                    print(f"Paciente: {v['nome']} - Idade: --")
+                    print(f"Idade: ---")
                 else:
-                    print(f"Paciente: {v['nome']} - Idade: {v['idade']}")
+                    print(f"Idade: {v['idade']}")
 
+                print(f"CPF: {v['cpf']} - RG: {v['rg']}")
                 print(f"Telefone: {v['telefone']} - Status documentação: {v['documentos_ok']}")
 
         resposta = input_sn("Deseja excluir este paciente? (S/N): ")
@@ -203,3 +217,85 @@ def localizar_excluir_pacientes():
             print("Cancelando da ação de exclusão do paciente.")
             time.sleep(2)
             break                
+
+
+
+# --- Busca pelo nome exato ---
+def procurar_paciente_por_nome_exato():
+    while True:
+        """Procura paciente pelo nome exato."""
+        clear_screen()
+        print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+        print("===== Localizar paciente pelo nome exato =====\n")
+        nome_busca = input("Entre com o nome exato do paciente ou (0) para retornar ao menu: ")
+        if nome_busca == "0":
+            break
+
+        pacientes = carregar_pacientes()
+
+        for cpf, dados in pacientes.items():
+            if dados["nome"].strip().lower() == nome_busca.strip().lower():
+                print("\n============ Paciente encontrado ===========\n")
+                print(f"Nome: {dados['nome']}")
+                print(f"Idade: {dados['idade']} anos")
+                print(f"Telefone: {dados['telefone']}")
+                print(f"CPF: {dados['cpf']}")
+                print(f"RG: {dados['rg']}")
+                input("Pressione ENTER para continuar...")
+
+                return 
+
+        print("❌ Nenhum paciente encontrado com esse nome exato.")
+        return
+
+
+# --- Busca por parte do nome ---
+def listar_paciente_por_nome_parcial():
+    while True:
+        """Procura pacientes contendo parte do nome (sem diferenciar maiúsculas/minúsculas)."""
+        clear_screen()
+        print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+        print("Localizar/listar pacientes por parcial do nome\n")
+        nome_busca = input("Entre com um trecho do nome do paciente ou (0) para retornar ao menu: ")
+        if nome_busca == "0":
+            break
+
+        pacientes = carregar_pacientes()
+        encontrados = []
+
+        for cpf, dados in pacientes.items():
+            if nome_busca.lower() in dados["nome"].lower():
+                encontrados.append(dados)
+
+        if encontrados:
+            #print("\n========== Pacientes encontrados ===========\n")
+            print("(Paciente------------------------------) - (CPF---------) - (telefone-----)")
+            for p in encontrados:
+                print(f"{(p['nome']+'                                              ')[0:40]} - {formatar_cpf(p['cpf'])} - {p['telefone']}")
+                print('- ' * 38)
+            input("Pressione ENTER para continuar...")
+
+        else:
+            print("❌ Nenhum paciente encontrado contendo esse nome ou parte do nome.")
+            time.sleep(2)
+        return            
+    
+def localizar_paciente_por_cpf_chamada():
+    clear_screen()
+    print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+    print("======== Localizar paciente pelo CPF =========\n")
+    cpf = limpar_cpf(input("Entre com o CPF do paciente ou (0) para retornar ao menu: "))
+                
+    if cpf == "0":
+        return
+
+    if not validar_cpf(cpf):
+        print("❌ CPF inválido. Tente novamente!")
+        time.sleep(2)
+        return
+
+    localizar_paciente_por_cpf(cpf)
+    input("Pressione ENTER para continuar...")
+
+
+            
