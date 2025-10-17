@@ -1,4 +1,20 @@
-from pacientes import localizar_paciente_por_cpf_chamada, cadastrar_pacientes, listar_todos_pacientes, alterar_pacientes, localizar_excluir_pacientes, listar_paciente_por_nome_parcial, procurar_paciente_por_nome_exato
+from fila_atendimento import menu_fila
+from consultas import menu_consultas
+from medicos import menu_medicos    
+from fila_atendimento import menu_fila
+from atendimento_medico import menu_medico
+from exames import menu_exames
+
+from pacientes import (
+    relat_analitico_pacientes,
+    localizar_paciente_por_cpf_chamada,
+    cadastrar_pacientes,
+    listar_todos_pacientes,
+    alterar_pacientes,
+    localizar_excluir_pacientes,
+    listar_paciente_por_nome_parcial,
+    procurar_paciente_por_nome_exato,
+)
 import os, time
 from utils  import clear_screen
 
@@ -73,26 +89,30 @@ def menu():
         print("3 - Cadastro de exames")
         print("4 - Consultas / Relatórios / Estatísticas")
         print("5 - Área Médica")
-        print("6 - Agendamento de consultas")
-        print("7 - Agendamento de exames")
+        print("6 - Agendamento de consultas / Fila de Atendimento")
         print("0 - Sair")
 
         opcao = input("Escolha o número que corresponde ao MENU: ")
 
         if opcao == "1":
             menu_pacientes()
-
-#        elif opcao == "2":
-#            listar_pacientes()
-#        elif opcao == "3":
-#            alterar_paciente(input("CPF: "), input("Novo Nome: ") or None, input("Nova Idade: ") or None, input("Novo Tel: ") or None, input("Novo RG: ") or None)
-#        elif opcao == "4":
-#            excluir_paciente(input("CPF: "))
+        elif opcao == "4":
+            relat_analitico_pacientes()
+        elif opcao == "6":
+            menu_fila()
+        elif opcao == "2":
+            menu_medicos()
+        elif opcao == "5":
+            menu_medico()
+        elif opcao == "3":
+           menu_exames()
         elif opcao == "0":
             print('Sistema de Gestão finalizado.')
             time.sleep(2)
             clear_screen()
             break
+
+
         else:
             print("❌ Opção inválida!aaa")
             time.sleep(2)

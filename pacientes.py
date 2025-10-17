@@ -100,6 +100,11 @@ def ins_dados_paciente(cpf):
 
 
 def altera_dados_paciente(cpf):
+    if cpf not in pacientes:
+        print("❌ CPF paciente não localizado. Tente novamente!")
+        time.sleep(2)
+        return
+
     paciente = tratar_nome(input_default("Digite o nome do paciente: ",pacientes[cpf]['nome']))
     idade = tratar_idade(input(f"Digite a idade [{pacientes[cpf]['idade']}]: "))
     tel_paciente = tratar_telefone(input_default("Digite o telefone: ",pacientes[cpf]['telefone']))
@@ -107,11 +112,11 @@ def altera_dados_paciente(cpf):
     resposta = input_sn("Deseja concluir a alteração do paciente? (S/N): ")
     if resposta == "S":
         salvar_paciente(paciente, idade, tel_paciente, rg_paciente, cpf, 'Alteração de cadastro:')
-            
+        
     else:
         print("Cancelando alteração de cadastro de paciente.")
         time.sleep(2)
-        
+    
     paciente = localizar_paciente_por_cpf(cpf)
     input("Pressione ENTER para continuar...")
     return
@@ -266,8 +271,8 @@ def listar_paciente_por_nome_parcial():
         for cpf, dados in pacientes.items():
             if nome_busca.lower() in dados["nome"].lower():
                 encontrados.append(dados)
-
         if encontrados:
+            encontrados.sort(key=lambda x: x["nome"])
             #print("\n========== Pacientes encontrados ===========\n")
             print("(Paciente------------------------------) - (CPF---------) - (telefone-----)")
             for p in encontrados:
@@ -298,4 +303,30 @@ def localizar_paciente_por_cpf_chamada():
     input("Pressione ENTER para continuar...")
 
 
-            
+def relat_analitico_pacientes():
+    # Número total de pacientes
+    pacientes = carregar_pacientes()
+    clear_screen()
+    print("\n===== SISTEMA DE GESTÃO - CLINICA VIDA + =====")
+    print("===== Relatório Analítico / Estatísticas =====\n")
+
+    # Número total de pacientes
+    total = len(pacientes)
+
+    # Idade média
+    media = sum(dados["idade"] for dados in pacientes.values()) / total
+
+    # Paciente mais novo
+    cpf_mais_novo = min(pacientes, key=lambda cpf: pacientes[cpf]["idade"])
+    mais_novo = pacientes[cpf_mais_novo]
+
+    # Paciente mais velho
+    cpf_mais_velho = max(pacientes, key=lambda cpf: pacientes[cpf]["idade"])
+    mais_velho = pacientes[cpf_mais_velho]
+
+    # Exibindo resultados
+    print(f"Número total de pacientes: {total}")
+    print(f"Idade média dos pacientes: {media:.2f} anos")
+    print(f"Paciente mais novo: {mais_novo['nome']} ({mais_novo['idade']} anos) - CPF: {formatar_cpf(cpf_mais_novo)}")
+    print(f"Paciente mais velho: {mais_velho['nome']} ({mais_velho['idade']} anos) - CPF: {formatar_cpf(cpf_mais_velho)}")
+    input("Pressione ENTER para continuar...")
